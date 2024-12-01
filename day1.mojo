@@ -1,19 +1,15 @@
-from collections import InlinedFixedVector
-from testing import assert_equal
-from memory import Reference
+from collections import InlinedFixedVector, Counter, Set
 from sys import simdwidthof
 from algorithm.functional import vectorize
 
-alias UINT_SIZE = Int32
+alias INT_SIZE = Int32
 alias dtype = DType.int32
-alias width = simdwidthof[UINT_SIZE]()
+alias width = simdwidthof[INT_SIZE]()
 
 
-fn read_columns[
-    file_path: String
-]() raises -> (List[UINT_SIZE], List[UINT_SIZE]):
-    var column1: List[UINT_SIZE] = List[UINT_SIZE]()
-    var column2: List[UINT_SIZE] = List[UINT_SIZE]()
+fn read_columns[file_path: String]() raises -> (List[INT_SIZE], List[INT_SIZE]):
+    var column1: List[INT_SIZE] = List[INT_SIZE]()
+    var column2: List[INT_SIZE] = List[INT_SIZE]()
 
     with open(file_path, "r") as file:
         lines = file.read().splitlines()
@@ -25,19 +21,19 @@ fn read_columns[
     return column1, column2
 
 
-fn helper(l1: List[UINT_SIZE], l2: List[UINT_SIZE]) raises -> UINT_SIZE:
+fn helper(l1: List[INT_SIZE], l2: List[INT_SIZE]) raises -> INT_SIZE:
     var c1p = l1.unsafe_ptr()
     var c2p = l2.unsafe_ptr()
 
-    var ret: UINT_SIZE = 0
+    var ret: INT_SIZE = 0
 
     @parameter
     fn process_vector[simd_width: Int](offset: Int):
         smd1 = c1p.load[width=simd_width](offset)
         smd2 = c2p.load[width=simd_width](offset)
-        print(smd1.__str__())
-        print(smd2.__str__())
-        print("----")
+        # print(smd1.__str__())
+        # print(smd2.__str__())
+        # print("----")
         smd3 = abs(smd1 - smd2)
         ret += smd3.reduce_add()
 
@@ -46,41 +42,38 @@ fn helper(l1: List[UINT_SIZE], l2: List[UINT_SIZE]) raises -> UINT_SIZE:
     return ret
 
 
+fn helperb(l1: List[INT_SIZE], l2: List[INT_SIZE]) raises -> INT_SIZE:
+    # Convert to List[Int] to make Counter library happy
+    var il1 = List[Int]()
+    var il2 = List[Int]()
+
+    for i in l1:
+        il1.append(int(i[]))
+    for i in l2:
+        il2.append(int(i[]))
+
+    var ret: INT_SIZE = 0
+    var c1 = Counter(il1)
+    var c2 = Counter(il2)
+
+    for item in c1.items():
+        ret += item[].key * item[].value * c2.get(item[].key, 0)
+
+    return ret
+
+
 fn main() raises:
-    alias file_path: String = "day1_sample.txt"
+    # alias file_path: String = "day1_sample.txt"
+    alias file_path: String = "day1.txt"
     column1, column2 = read_columns[file_path]()
 
     sort(column1)
     sort(column2)
 
-    print(column1.__str__())
-    print(column2.__str__())
+    # print(column1.__str__())
+    # print(column2.__str__())
 
-    ret0 = helper(column1, column2)
-    print("HELLO", ret0)
-
-    var c1p = column1.unsafe_ptr()
-    var c2p = column2.unsafe_ptr()
-
-    var ret: UINT_SIZE = 0
-
-    @parameter
-    fn process_vector[simd_width: Int](offset: Int):
-        smd1 = c1p.load[width=simd_width](offset)
-        smd2 = c2p.load[width=simd_width](offset)
-        print(smd1.__str__())
-        print(smd2.__str__())
-        print("----")
-        smd3 = abs(smd1 - smd2)
-        ret += smd3.reduce_add()
-
-    for val in column1:
-        print(val[])
-    print("--------------------------------")
-    for val in column2:
-        print(val[])
-
-    var n = len(column1)
-    vectorize[process_vector, width](n)
-
-    print(ret)
+    var reta = helper(column1, column2)
+    print("Part a:", reta)
+    var retb = helperb(column1, column2)
+    print("Part b:", retb)
