@@ -1,6 +1,6 @@
 from collections import InlinedFixedVector, Counter, Set
 from sys import simdwidthof
-from algorithm.functional import vectorize
+from algorithm.functional import vectorize, parallelize
 
 alias INT_SIZE = Int32
 alias dtype = DType.int32
@@ -62,6 +62,29 @@ fn helperb(l1: List[INT_SIZE], l2: List[INT_SIZE]) raises -> INT_SIZE:
     return ret
 
 
+fn helperb2(l1: List[INT_SIZE], l2: List[INT_SIZE]) raises -> INT_SIZE:
+    l = len(l1)
+    var il1 = List[Int](capacity=l)
+    var il2 = List[Int](capacity=l)
+
+    @parameter
+    fn convert_list(ii: Int):
+        # The below is non-deterministic, leading to wrong part b results
+        il1.append(int(l1[ii]))
+        il2.append(int(l2[ii]))
+
+    parallelize[convert_list](l)
+
+    var ret: INT_SIZE = 0
+    var c1 = Counter[Int](il1)
+    var c2 = Counter[Int](il2)
+
+    for item in c1.items():
+        ret += item[].key * item[].value * c2.get(item[].key, 0)
+
+    return ret
+
+
 fn main() raises:
     # alias file_path: String = "day1_sample.txt"
     alias file_path: String = "day1.txt"
@@ -75,5 +98,5 @@ fn main() raises:
 
     var reta = helper(column1, column2)
     print("Part a:", reta)
-    var retb = helperb(column1, column2)
+    var retb = helperb2(column1, column2)
     print("Part b:", retb)
