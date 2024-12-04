@@ -1,14 +1,27 @@
 from python import Python
 
 
-fn partb(file: List[String]) raises -> Int:
+fn parta(lines: List[String]) raises -> Int:
     re = Python.import_module("re")
-    # Define regex patterns
-    var pattern = re.compile(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")
-    print(pattern)
+    var pattern = r"mul\((\d+),(\d+)\)"
 
     var total = 0
-    var mul_enabled = True  # Initial state
+    for input_str in lines:
+        var matches = re.findall(pattern, input_str[])
+
+        for matche in matches:
+            var a = atol(matche.__getitem__(0).__str__())
+            var b = atol(matche.__getitem__(1).__str__())
+            total += int(a) * int(b)
+    return total
+
+
+fn partb(file: List[String]) raises -> Int:
+    var re = Python.import_module("re")
+    var pattern = re.compile(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)")
+
+    var total = 0
+    var mul_enabled = True
 
     for line in file:
         for matche in pattern._call_single_arg_method("finditer", line[]):
@@ -32,9 +45,6 @@ fn main() raises:
     with open("day3.txt", "r") as file:
         lines = file.read().splitlines()
 
-    # var input_str: String = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
-    # var lines = List[String](input_str)
-
     total = 0
     var pattern = r"mul\((\d+),(\d+)\)"
 
@@ -46,7 +56,5 @@ fn main() raises:
             var b = atol(matche.__getitem__(1).__str__())
             total += int(a) * int(b)
 
-    print(total)
-
-    print("--  Part Two  --")
-    print(partb(lines))
+    print("Part a:", parta(lines))
+    print("Part b:", partb(lines))
