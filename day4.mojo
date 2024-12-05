@@ -5,14 +5,14 @@ fn day1() raises:
     var word = "XMAS"
     var word_len = len(word)
     var directions = List(
-        List[Int](0, 1),  # Horizontal right
-        List[Int](1, 0),  # Vertical down
-        List[Int](1, 1),  # Diagonal down-right
-        List[Int](0, -1),  # Horizontal left
-        List[Int](-1, 0),  # Vertical up
-        List[Int](-1, -1),  # Diagonal up-left
-        List[Int](1, -1),  # Diagonal down-left
-        List[Int](-1, 1),  # Diagonal up-right
+        List[Int](0, 1),
+        List[Int](1, 0),
+        List[Int](1, 1),
+        List[Int](0, -1),
+        List[Int](-1, 0),
+        List[Int](-1, -1),
+        List[Int](1, -1),
+        List[Int](-1, 1),
     )
 
     fn count_word(grid: List[String], word: String) -> Int:
