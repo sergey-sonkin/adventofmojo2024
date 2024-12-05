@@ -2,9 +2,9 @@ fn day1() raises:
     with open("day4.txt", "r") as file:
         grid = file.read().splitlines()
 
-    var word = "XMAS"
-    var word_len = len(word)
-    var directions = List(
+    alias word: String = "XMAS"
+    alias word_len = 4
+    alias directions = List(
         List[Int](0, 1),
         List[Int](1, 0),
         List[Int](1, 1),
@@ -15,31 +15,28 @@ fn day1() raises:
         List[Int](-1, 1),
     )
 
-    fn count_word(grid: List[String], word: String) -> Int:
-        var rows = len(grid)
-        var cols = len(grid[0])
-        var count = 0
+    var rows = len(grid)
+    var cols = len(grid[0])
+    var count = 0
 
-        for i in range(rows):
-            for j in range(cols):
-                for dir in directions:
-                    var di = dir[][0]
-                    var dj = dir[][1]
-                    var k = 0
-                    while k < word_len:
-                        var ni = i + di * k
-                        var nj = j + dj * k
-                        if ni < 0 or ni >= rows or nj < 0 or nj >= cols:
-                            break
-                        if grid[ni][nj] != word[k]:
-                            break
-                        k += 1
-                    if k == word_len:
-                        count += 1
-        return count
+    for r in range(rows):
+        for c in range(cols):
+            for dir in directions:
+                var di = dir[][0]
+                var dj = dir[][1]
+                var k = 0
+                while k < word_len:
+                    var ni = r + di * k
+                    var nj = c + dj * k
+                    if ni < 0 or ni >= rows or nj < 0 or nj >= cols:
+                        break
+                    if grid[ni][nj] != word[k]:
+                        break
+                    k += 1
+                if k == word_len:
+                    count += 1
 
-    var total = count_word(grid, word)
-    print("Total occurrences of", word, ": ", total)
+    print("Part a:", count)
 
 
 fn day2() raises:
