@@ -1,16 +1,4 @@
 fn day1() raises:
-    var grid: List[String] = List[String](
-        "MMMSXXMASM",
-        "MSAMXMSMSA",
-        "AMXSXMAAMM",
-        "MSAMASMSMX",
-        "XMASAMXAMM",
-        "XXAMMXXAMA",
-        "SMSMSASXSS",
-        "SAXAMASAAA",
-        "MAMMMXMMMM",
-        "MXMXAXMASX",
-    )
     with open("day4.txt", "r") as file:
         grid = file.read().splitlines()
 
@@ -55,18 +43,6 @@ fn day1() raises:
 
 
 fn day2() raises:
-    var grid: List[String] = List[String](
-        "MMMSXXMASM",
-        "MSAMXMSMSA",
-        "AMXSXMAAMM",
-        "MSAMASMSMX",
-        "XMASAMXAMM",
-        "XXAMMXXAMA",
-        "SMSMSASXSS",
-        "SAXAMASAAA",
-        "MAMMMXMMMM",
-        "MXMXAXMASX",
-    )
     with open("day4.txt", "r") as file:
         grid = file.read().splitlines()
 
