@@ -27,6 +27,9 @@ struct Location:
             or self.last_location != other.last_location
         )
 
+    fn can_add(self, location: UInt16) -> Bool:
+        return location == self.last_location + 1
+
 
 @value
 struct DiskMap:
@@ -116,6 +119,26 @@ struct DiskMap:
             locations_list[-1].last_location -= 1
             self.files[file_index] = locations_list
 
+    fn add_location(mut self, file_index: Int, location_to_add: UInt16) raises:
+        locations = self.files[file_index]
+        # Find if it belongs in the struct
+        for ii in range(len(locations)):
+            location_struct = locations[ii]
+            if location_struct.can_add(location_to_add):
+                # Can't mutate list so need to create copy
+                var locations_list = self.files[file_index]
+                locations_list[ii].last_location += 1
+                self.files[file_index] = locations_list
+                # Need to compact spaces if necessary
+                if ii + 1 < len(locations) and locations_list[ii].last_location == locations_list[ii+1].starting_location:
+                    locations_list[ii+1].starting_location = locations_list[ii].starting_location
+                    _ = locations_list.pop(ii)
+                return
+
+        # If it doesn't, just append it
+        new_location = Location(starting_location=location_to_add, last_location=location_to_add)
+        self.files[file_index].append(new_location)
+        return
 
 fn process_initial_input(input: String) raises -> DiskMap:
     l = len(input)
@@ -193,12 +216,15 @@ fn main() raises:
 
     var current_int = len(files) - 1
     disk_map.debug_print()
-    while True:
-        print("Current int:",current_int)
+    while current_int >= 0:
         first_available_space = disk_map.get_first_space()
         last_file_location = disk_map.get_last_file_location(current_int)
+        print("Current int:",current_int, "First available space:", first_available_space, "Last file location:", last_file_location)
         if first_available_space > last_file_location:
+            current_int -= 1
             break
+        disk_map.pop_first_space()
+        disk_map.add_location(current_int, first_available_space)
 
     # while True:
     #     # Step 1. Grab the last number. We might need to grab a smaller number
