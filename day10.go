@@ -55,7 +55,7 @@ func solvePart1(grid [][]int, rows, cols int, trailheads []Point, dr, dc []int) 
 					continue // Found an endpoint for this path
 				}
 
-				for i := 0; i < 4; i++ {
+				for i := range 4 {
 					nr, nc := r+dr[i], c+dc[i]
 					if nr >= 0 && nr < rows && nc >= 0 && nc < cols {
 						if grid[nr][nc] == currentHeight+1 {
